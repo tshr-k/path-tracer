@@ -51,5 +51,6 @@ int main() {
 
     const Tracer tracer{scene};
     const RandomSampler sampler{64};
+
     tracer.render(sampler, image_height, image_width, 16, math::Interval{0.001, math::infinity});
 }

@@ -36,7 +36,7 @@ private:
     }
 
 public:
-    constexpr Transform() = default;
+    Transform() = default;
 
     constexpr Transform& set_position(const Point& p) {
         position_ = p;
@@ -88,12 +88,12 @@ public:
         return g_to_l_ * v;
     }
 
-    [[nodiscard]] constexpr Vector local_to_global_normal(const Vector& normal) const {
+    [[nodiscard]] Vector local_to_global_normal(const Vector& normal) const {
         ensure_matrix_validity();
         return transpose(g_to_l_) * normal;
     }
 
-    [[nodiscard]] constexpr Vector global_to_local_normal(const Vector& normal) const {
+    [[nodiscard]] Vector global_to_local_normal(const Vector& normal) const {
         ensure_matrix_validity();
         return transpose(l_to_g_) * normal;
     }

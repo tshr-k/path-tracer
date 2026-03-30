@@ -26,5 +26,5 @@ public:
     std::vector<Point> vertices;
     std::vector<Triangle> triangles;
 
-    constexpr Mesh() = default;
+    Mesh() = default;
 };

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <iostream>
 
 #include "scene.h"
@@ -70,6 +71,8 @@ public:
     constexpr Tracer(const Scene& scene) : scene_{scene} {}
 
     void render(const Sampler& sampler, int image_height, int image_width, int max_bounce_depth, const math::Interval t_range) const {       
+        std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
+        
         for (int row = 0; row < image_height; row++) {
             std::clog << "Rendering row " << (row + 1) << " / " << image_height << '\r';
             for (int col = 0; col < image_width; col++) {
@@ -93,6 +96,8 @@ public:
             }
         }
 
-    std::clog << "\nFinished rendering!\n";
+        std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();
+        std::chrono::duration<double> elapsed_seconds = end_time - start_time;
+        std::clog << "\nRendering finished in " << elapsed_seconds.count() << " seconds.\n";
     }
 };

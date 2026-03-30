@@ -64,7 +64,7 @@ struct math::Interval {
         return min < x && x < max;
     }
 
-    [[noexcept]] constexpr math::Interval expand(double padding) const {
+    [[nodiscard]] constexpr math::Interval expand(double padding) const {
         return {min - padding, max + padding};
     }
 };

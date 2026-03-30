@@ -24,7 +24,7 @@ private:
     Colour background_colour_;  // TODO: Add environment map here later
 
 public:
-    constexpr Scene() : active_camera_index_{-1}, background_colour_{Colour::black} {};
+    Scene() : active_camera_index_{-1}, background_colour_{Colour::black} {};
 
     void add_material(std::unique_ptr<Material> material) {
         materials_.push_back(std::move(material));
