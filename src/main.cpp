@@ -13,8 +13,8 @@
 #include "math_utils.h"
 
 int main() {
-    const int image_height = 512;
-    const int image_width = 1024;
+    const int image_height = 256;
+    const int image_width = 512;
     io::ppm::write_header(std::cout, image_height, image_width);
 
     Scene scene;
