@@ -4,6 +4,7 @@
 
 #include "colour.h"
 #include "bsdf.h"
+#include <variant>
 
 
 struct HitRecord;
@@ -133,3 +134,5 @@ public:
         return emission_colour_ * emission_strength_;
     }
 };
+
+using MaterialVariant = std::variant<DiffuseMaterial, EmissiveMaterial, PlasticMaterial, MetalMaterial, UberMaterial>;

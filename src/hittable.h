@@ -1,6 +1,8 @@
 #pragma once
 
+#include <cstddef>
 #include <limits>
+#include <variant>
 
 #include "ray.h"
 #include "point.h"
@@ -13,7 +15,7 @@ struct HitRecord {
     double t{math::infinity};
     Point point{};
     UnitVector normal = UnitVector::e_x();
-    Material* material = nullptr;  // Raw pointer to avoid overhead of increments. Lifetime is managed by Scene
+    std::size_t material_index{0};
 };
 
 class Hittable {
@@ -23,3 +25,8 @@ public:
 
     virtual AABB bounding_box() const = 0;
 };
+
+
+class UnitSphere;
+
+using HittableVariant = std::variant<UnitSphere /*, Triangle, Mesh, etc.*/>;

@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <variant>
 
 #include "scene.h"
 #include "sampler.h"
@@ -25,16 +26,17 @@ private:
         bool hit_anything = false;
         double nearest_t_so_far = t_range.max;
 
-        for (const auto& hittable : scene_.world()) {
-            if (hittable->hit(ray, hit_record, math::Interval{t_range.min, nearest_t_so_far})) {
+        for (const auto& instance : scene_.world()) {
+            if (scene_.hit_instance(ray, hit_record, math::Interval{t_range.min, nearest_t_so_far}, instance)) {
                 hit_anything = true;
                 nearest_t_so_far = hit_record.t;
             }
         }
 
         if (hit_anything) {
-            const Colour emitted = hit_record.material->emission();
-            const auto bsdf = hit_record.material->create_bsdf();
+            const MaterialVariant& material = scene_.materials()[hit_record.material_index];
+            const Colour emitted = std::visit([](const auto& m) { return m.emission(); }, material);
+            const auto bsdf = std::visit([](const auto& m) { return m.create_bsdf(); }, material);
             if (!bsdf) {  // No scattering, purely emissive
                 return emitted;
             }
