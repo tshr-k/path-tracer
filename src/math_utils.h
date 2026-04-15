@@ -1,10 +1,22 @@
 #pragma once
 
 #include <cmath>
+#include <iostream>
 #include <random>
 
+
 namespace math {
+    // Default for internal comparison functions
     constexpr double eps = 1e-6;
+
+    // Prevent self-intersection (shadow acne)
+    constexpr double shadow_epsilon = 1e-3;
+
+    // For parallel ray/plane tests
+    constexpr double parallel_epsilon = 1e-8;
+
+    // For avoiding zero-width bounding boxes
+    constexpr double bbox_eps = 1e-4;
 
     constexpr double pi = 3.14159265358979323846;
 
@@ -41,6 +53,7 @@ namespace math {
     struct Interval;
 }
 
+
 struct math::Interval {
     double min;
     double max;
@@ -64,7 +77,21 @@ struct math::Interval {
         return min < x && x < max;
     }
 
-    [[nodiscard]] constexpr math::Interval expand(double padding) const {
+    [[nodiscard]] constexpr math::Interval pad(double padding) const {
         return {min - padding, max + padding};
     }
+
+    [[nodiscard]] constexpr math::Interval ensure_size(double min_size) const {
+        const double current_size = size();
+        if (current_size >= min_size) {
+            return *this;
+        }
+        const double padding = (min_size - current_size) / 2.0;
+        return this->pad(padding);
+    }
 };
+
+
+inline std::ostream& operator<<(std::ostream& os, const math::Interval& interval) {
+    return os << "[" << interval.min << ", " << interval.max << "]";
+}

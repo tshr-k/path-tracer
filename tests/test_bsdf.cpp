@@ -1,9 +1,8 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include <iostream>
-
 #include "../src/vector3.h"
 #include "../src/bsdf.h"
+
 
 TEST_CASE("LambertianBRDF evaluates to albedo / pi for valid directions") {
     const Colour albedo{0.8, 0.1, 0.1};

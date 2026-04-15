@@ -12,7 +12,7 @@
 #include "aabb.h"
 
 struct HitRecord {
-    double t{math::infinity};
+    double t{math::infinity};  // Upper bound on t for the nearest hit so far, i.e., t_max
     Point point{};
     UnitVector normal = UnitVector::e_x();
     std::size_t material_index{0};
@@ -21,12 +21,8 @@ struct HitRecord {
 class Hittable {
 public:
     virtual ~Hittable() = default;
-    virtual bool hit(const Ray& ray, HitRecord& hit_record, const math::Interval t_range) const = 0;
+    
+    virtual bool hit(const Ray& ray, HitRecord& hit_record, double t_min) const = 0;  // hit_record already contains the nearest hit so far, i.e., t_max
 
     virtual AABB bounding_box() const = 0;
 };
-
-
-class UnitSphere;
-
-using HittableVariant = std::variant<UnitSphere /*, Triangle, Mesh, etc.*/>;

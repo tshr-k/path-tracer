@@ -19,10 +19,12 @@ target_link_libraries(unit_tests PRIVATE Catch2::Catch2WithMain)
 target_sources(unit_tests PRIVATE
   tests/test_aabb.cpp
   tests/test_bsdf.cpp
+  tests/test_bvh.cpp
   tests/test_camera.cpp
   tests/test_math.cpp
+  tests/test_mesh.cpp
   tests/test_random.cpp
   tests/test_sampler.cpp
-  tests/test_unit_sphere.cpp
   tests/test_transform.cpp
+  tests/test_unit_sphere.cpp
 )

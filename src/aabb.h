@@ -2,6 +2,8 @@
 
 #include <array>
 #include <cstddef>
+#include <initializer_list>
+#include <iostream>
 
 #include "math_utils.h"
 #include "point.h"
@@ -12,23 +14,42 @@ private:
     std::array<math::Interval, 3> intervals_;
 
 public:
-    constexpr AABB() {}
-
     constexpr math::Interval x() const { return intervals_[0]; }
     constexpr math::Interval y() const { return intervals_[1]; }
     constexpr math::Interval z() const { return intervals_[2]; }
 
     constexpr math::Interval operator[](std::size_t i) const { return intervals_[i]; }
 
-    constexpr AABB(math::Interval x, math::Interval y, math::Interval z)
-        : intervals_{x, y, z} {}
+    constexpr AABB() : intervals_{} {}
 
-    constexpr AABB(const Point& p, const Point& q)
-        : intervals_{
-            math::Interval{std::fmin(p.x(), q.x()), std::fmax(p.x(), q.x())},
-            math::Interval{std::fmin(p.y(), q.y()), std::fmax(p.y(), q.y())},
-            math::Interval{std::fmin(p.z(), q.z()), std::fmax(p.z(), q.z())}
-        } {}
+    constexpr AABB(math::Interval x, math::Interval y, math::Interval z)
+        : intervals_{x.ensure_size(math::bbox_eps), y.ensure_size(math::bbox_eps), z.ensure_size(math::bbox_eps)} {}
+
+    constexpr AABB(std::initializer_list<Point> points) {
+        if (points.size() == 0) {
+            intervals_ = {math::Interval(), math::Interval(), math::Interval()};
+            return;
+        }
+
+        math::Interval x_interval{};  // Empty interval with min = +inf and max = -inf
+        math::Interval y_interval{};
+        math::Interval z_interval{};
+
+        for (const Point& p : points) {
+            x_interval.max = std::max(x_interval.max, p.x());
+            x_interval.min = std::min(x_interval.min, p.x());
+            y_interval.max = std::max(y_interval.max, p.y());
+            y_interval.min = std::min(y_interval.min, p.y());
+            z_interval.max = std::max(z_interval.max, p.z());
+            z_interval.min = std::min(z_interval.min, p.z());
+        }
+
+        intervals_ = {
+            math::Interval{x_interval.min, x_interval.max}.ensure_size(math::bbox_eps),
+            math::Interval{y_interval.min, y_interval.max}.ensure_size(math::bbox_eps),
+            math::Interval{z_interval.min, z_interval.max}.ensure_size(math::bbox_eps)
+        };
+    }
 
     constexpr static AABB merge(AABB a, AABB b) {
         return AABB{
@@ -50,7 +71,7 @@ public:
         return longest_axis;
     }
 
-    bool hit(const Ray& ray, math::Interval t_range) const {
+    bool hit(const Ray& ray, math::Interval t_range) const {  // Full t_range required since there's no hit_record
         for (int axis = 0; axis < 3; ++axis) {
             const double inv_dir = 1.0 / ray.direction()[axis];
             const double orig = ray.origin()[axis];
@@ -68,3 +89,8 @@ public:
         return true;
     }
 };
+
+
+inline std::ostream& operator<<(std::ostream& os, const AABB& bbox) {
+    return os << "AABB[x" << bbox.x() << ", y" << bbox.y() << ", z" << bbox.z() << "]";
+}

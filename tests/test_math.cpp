@@ -27,7 +27,7 @@ TEST_CASE("Interval class works", "[Maths]") {
     REQUIRE_FALSE(i.surrounds(3));
     REQUIRE(i.surrounds(3.00001));
 
-    math::Interval j = i.expand(2);
+    math::Interval j = i.pad(2);
     REQUIRE(j.contains(1));
 }
 

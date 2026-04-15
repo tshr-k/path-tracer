@@ -14,7 +14,7 @@ private:
     mutable Matrix l_to_g_{}; // Matrix() is identity
     mutable Matrix g_to_l_{};
 
-    mutable bool cache_is_valid_{true};
+    mutable bool matrix_is_valid_{true};
 
     void recalculate_matrices() const {
         Matrix t = Matrix::translation(position_.r());
@@ -29,9 +29,9 @@ private:
     }
 
     constexpr void ensure_matrix_validity() const {
-        if (!cache_is_valid_) {
+        if (!matrix_is_valid_) {
             recalculate_matrices();
-            cache_is_valid_ = true;
+            matrix_is_valid_ = true;
         }
     }
 
@@ -40,50 +40,50 @@ public:
 
     constexpr Transform& set_position(const Point& p) {
         position_ = p;
-        cache_is_valid_ = false;
+        matrix_is_valid_ = false;
         return *this;
     }
 
     constexpr Transform& set_scale(const Scale& s) {
         scale_ = s;
-        cache_is_valid_ = false;
+        matrix_is_valid_ = false;
         return *this;
     }
 
     constexpr Transform& set_rotation(const EulerAngles& euler_angles) {
         rotation_ = euler_angles;
-        cache_is_valid_ = false;
+        matrix_is_valid_ = false;
         return *this;
     }
 
     constexpr Transform& translate(const Vector& v) {
         position_ += v;
-        cache_is_valid_ = false;
+        matrix_is_valid_ = false;
         return *this;
     }
 
     constexpr Transform& scale(const Scale& s) {
         scale_ *= s;
-        cache_is_valid_ = false;
+        matrix_is_valid_ = false;
         return *this;
     }
 
-    [[nodiscard]] constexpr Point local_to_global(const Point& p) const {
+    [[nodiscard]] Point local_to_global(const Point& p) const {
         ensure_matrix_validity();
         return l_to_g_ * p;
     }
 
-    [[nodiscard]] constexpr Point global_to_local(const Point& p) const {
+    [[nodiscard]] Point global_to_local(const Point& p) const {
         ensure_matrix_validity();
         return g_to_l_ * p;
     }
 
-    [[nodiscard]] constexpr Vector local_to_global(const Vector& v) const {
+    [[nodiscard]] Vector local_to_global(const Vector& v) const {
         ensure_matrix_validity();
         return l_to_g_ * v;
     }
     
-    [[nodiscard]] constexpr Vector global_to_local(const Vector& v) const {
+    [[nodiscard]] Vector global_to_local(const Vector& v) const {
         ensure_matrix_validity();
         return g_to_l_ * v;
     }
@@ -98,7 +98,7 @@ public:
         return transpose(l_to_g_) * normal;
     }
 
-    [[nodiscard]] constexpr Ray local_to_global(const Ray& r) const {
+    [[nodiscard]] Ray local_to_global(const Ray& r) const {
         ensure_matrix_validity();
         return Ray{
             l_to_g_ * r.origin(),
@@ -106,7 +106,7 @@ public:
         };
     }
 
-    [[nodiscard]] constexpr Ray global_to_local(const Ray& r) const {
+    [[nodiscard]] Ray global_to_local(const Ray& r) const {
         ensure_matrix_validity();
         return Ray{
             g_to_l_ * r.origin(),

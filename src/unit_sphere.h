@@ -11,9 +11,9 @@ private:
     const AABB bounding_box_;
 
 public:
-    UnitSphere() : bounding_box_{AABB(Point{-1, -1, -1}, Point{1, 1, 1})} {}
+    UnitSphere() : bounding_box_{Point{-1, -1, -1}, Point{1, 1, 1}} {}
 
-    bool hit(const Ray& local_ray, HitRecord& hit_record, const math::Interval t_range) const override {
+    bool hit(const Ray& local_ray, HitRecord& hit_record, double t_min) const override {
         const Vector origin = local_ray.origin().r();
         const Vector direction = local_ray.direction();
 
@@ -26,9 +26,9 @@ public:
         const double sqrt_d = std::sqrt(discriminant);
 
         double t = (-half_b - sqrt_d) / a;
-        if (t < t_range.min || t_range.max < t) {
+        if (t < t_min || hit_record.t < t) {  // The hit record contains the nearest hit so far
             t = (-half_b + sqrt_d) / a;
-            if (t < t_range.min || t_range.max < t)
+            if (t < t_min || hit_record.t < t)
                 return false;
         }
 

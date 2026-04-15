@@ -23,17 +23,7 @@ private:
         }
         
         HitRecord hit_record;
-        bool hit_anything = false;
-        double nearest_t_so_far = t_range.max;
-
-        for (const auto& instance : scene_.world()) {
-            if (scene_.hit_instance(ray, hit_record, math::Interval{t_range.min, nearest_t_so_far}, instance)) {
-                hit_anything = true;
-                nearest_t_so_far = hit_record.t;
-            }
-        }
-
-        if (hit_anything) {
+        if (scene_.hit(ray, hit_record, t_range.min)) {
             const MaterialVariant& material = scene_.materials()[hit_record.material_index];
             const Colour emitted = std::visit([](const auto& m) { return m.emission(); }, material);
             const auto bsdf = std::visit([](const auto& m) { return m.create_bsdf(); }, material);
