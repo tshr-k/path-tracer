@@ -12,19 +12,84 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
-add_executable(PathTracer src/main.cpp)
+# Splitting the codebase into .h/.cpp pairs means the small, hot math types (Vector, Point,
+# Matrix, Colour, Ray, ONB, ...) are no longer inlined across translation units by default.
+# IPO/LTO restores that cross-TU inlining at link time for Release builds, so incremental
+# Debug builds stay fast while Release keeps the original header-only performance.
+include(CheckIPOSupported)
+check_ipo_supported(RESULT ipo_supported OUTPUT ipo_error)
+
+set(PATHTRACER_SOURCES
+  src/main.cpp
+  src/math/math_utils.cpp
+  src/math/vector3.cpp
+  src/math/point.cpp
+  src/math/matrix4.cpp
+  src/math/onb.cpp
+  src/math/ray.cpp
+  src/math/transform.cpp
+  src/math/colour.cpp
+  src/geometry/aabb.cpp
+  src/geometry/mesh.cpp
+  src/geometry/unit_sphere.cpp
+  src/geometry/instance.cpp
+  src/accel/blas.cpp
+  src/accel/tlas.cpp
+  src/shading/bsdf.cpp
+  src/shading/material.cpp
+  src/render/camera.cpp
+  src/render/sampler.cpp
+  src/render/scene.cpp
+  src/render/tracer.cpp
+  src/io/image_io.cpp
+  src/io/mesh_io.cpp
+)
+
+add_executable(PathTracer ${PATHTRACER_SOURCES})
+target_include_directories(PathTracer PRIVATE src)
+if(ipo_supported)
+  set_property(TARGET PathTracer PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+endif()
 
 add_executable(unit_tests tests/main.cpp)
 target_link_libraries(unit_tests PRIVATE Catch2::Catch2WithMain)
+target_include_directories(unit_tests PRIVATE src)
 target_sources(unit_tests PRIVATE
-  tests/test_aabb.cpp
-  tests/test_bsdf.cpp
-  tests/test_bvh.cpp
-  tests/test_camera.cpp
-  tests/test_math.cpp
-  tests/test_mesh.cpp
-  tests/test_random.cpp
-  tests/test_sampler.cpp
-  tests/test_transform.cpp
-  tests/test_unit_sphere.cpp
+  # Library sources under test (everything except PathTracer's own main.cpp)
+  src/math/math_utils.cpp
+  src/math/vector3.cpp
+  src/math/point.cpp
+  src/math/matrix4.cpp
+  src/math/onb.cpp
+  src/math/ray.cpp
+  src/math/transform.cpp
+  src/math/colour.cpp
+  src/geometry/aabb.cpp
+  src/geometry/mesh.cpp
+  src/geometry/unit_sphere.cpp
+  src/geometry/instance.cpp
+  src/accel/blas.cpp
+  src/accel/tlas.cpp
+  src/shading/bsdf.cpp
+  src/shading/material.cpp
+  src/render/camera.cpp
+  src/render/sampler.cpp
+  src/render/scene.cpp
+  src/render/tracer.cpp
+  src/io/image_io.cpp
+  src/io/mesh_io.cpp
+
+  tests/accel/test_bvh.cpp
+  tests/geometry/test_aabb.cpp
+  tests/geometry/test_mesh.cpp
+  tests/geometry/test_unit_sphere.cpp
+  tests/math/test_math.cpp
+  tests/math/test_random.cpp
+  tests/math/test_transform.cpp
+  tests/render/test_camera.cpp
+  tests/render/test_sampler.cpp
+  tests/shading/test_bsdf.cpp
 )
+if(ipo_supported)
+  set_property(TARGET unit_tests PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+endif()

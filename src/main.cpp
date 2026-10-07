@@ -1,16 +1,18 @@
 #include <iostream>
+#include <memory>
 
-#include "colour.h"
-#include "camera.h"
-#include "image_io.h"
-#include "mesh.h"
-#include "mesh_io.h"
-#include "material.h"
-#include "unit_sphere.h"
-#include "scene.h"
-#include "sampler.h"
-#include "tracer.h"
-#include "math_utils.h"
+#include "math/colour.h"
+#include "render/camera.h"
+#include "io/image_io.h"
+#include "geometry/mesh.h"
+#include "io/mesh_io.h"
+#include "shading/material.h"
+#include "geometry/unit_sphere.h"
+#include "render/scene.h"
+#include "render/sampler.h"
+#include "render/tracer.h"
+#include "math/math_utils.h"
+#include "math/transform.h"
 
 int main() {
     const int image_height = 512;
