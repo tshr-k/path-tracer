@@ -49,8 +49,8 @@ double GGXBRDF::ggx_D(const UnitVector& h) const {
 }
 
 double GGXBRDF::ggx_G1(const UnitVector& v) const {
-    const double n_v = std::max(v.z(), 0.0);  // local space: n = (0,0,1)
-    const double k = alpha_ / 2.0;      // common approximation
+    const double n_v = std::max(v.z(), 0.0);  // Local space: n = (0,0,1)
+    const double k = alpha_ / 2.0;      // Common approximation
     return n_v / (n_v * (1.0 - k) + k);
 }
 

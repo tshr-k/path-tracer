@@ -23,8 +23,9 @@ namespace math {
     }
 
     double random() {
-        static std::uniform_real_distribution<double> distribution(0.0, 1.0);
-        static std::mt19937 generator;
+        // Avoid correlation between tiles' noise and possible corruption of rng due to races
+        static thread_local std::mt19937 generator{std::random_device{}()};
+        static thread_local std::uniform_real_distribution<double> distribution(0.0, 1.0);
         return distribution(generator);
     }
 

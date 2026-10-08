@@ -4,6 +4,8 @@
 
 #include "math/math_utils.h"
 
+thread_local int Sampler::current_sample_index_ = 0;
+
 Sampler::Sampler(int samples_per_pixel) : samples_per_pixel_{samples_per_pixel} {}
 
 int Sampler::samples_per_pixel() const { return samples_per_pixel_; }

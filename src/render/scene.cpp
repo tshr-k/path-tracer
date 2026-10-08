@@ -27,7 +27,7 @@ void Scene::add_mesh(const Mesh& mesh) {
 }
 
 void Scene::add_instance(std::size_t geometry_index, std::size_t material_index, const Transform& T) {
-    // geometry and material must already be in the scene
+    // Geometry and material must already be in the scene
     auto instance = Instance{geometries_[geometry_index].get(), material_index};
     instance.set_transform(T);
     instances_.push_back(std::move(instance));

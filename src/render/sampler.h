@@ -6,7 +6,9 @@
 class Sampler {
 protected:
     const int samples_per_pixel_;
-    mutable int current_sample_index_ = 0;
+    // thread_local: render() shares one Sampler instance across worker threads,
+    // and each thread walks its own pixels/samples independently.
+    static thread_local int current_sample_index_;
 
 public:
     virtual ~Sampler() = default;

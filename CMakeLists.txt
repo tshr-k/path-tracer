@@ -38,6 +38,7 @@ set(PATHTRACER_SOURCES
   src/shading/bsdf.cpp
   src/shading/material.cpp
   src/render/camera.cpp
+  src/render/frame_buffer.cpp
   src/render/sampler.cpp
   src/render/scene.cpp
   src/render/tracer.cpp
@@ -73,6 +74,7 @@ target_sources(unit_tests PRIVATE
   src/shading/bsdf.cpp
   src/shading/material.cpp
   src/render/camera.cpp
+  src/render/frame_buffer.cpp
   src/render/sampler.cpp
   src/render/scene.cpp
   src/render/tracer.cpp
@@ -87,6 +89,7 @@ target_sources(unit_tests PRIVATE
   tests/math/test_random.cpp
   tests/math/test_transform.cpp
   tests/render/test_camera.cpp
+  tests/render/test_frame_buffer.cpp
   tests/render/test_sampler.cpp
   tests/shading/test_bsdf.cpp
 )
