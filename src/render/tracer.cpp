@@ -107,24 +107,31 @@ void Tracer::render(const Sampler& sampler, int image_width, int image_height, i
         }
     }
 
+    // Build the TLAS (and the Instance/Transform caches it triggers) single-threaded here,
+    // before any worker exists, so the lazy-init checks in Scene::hit() never race.
+    scene_.ensure_tlas_built();
+
     const int num_tiles = tiles.size();
-    std::atomic<std::size_t> next_tile = 0;
+    std::atomic<std::size_t> next_tile_i = 0;
+
     std::mutex clog_mutex;
+    int tiles_finished = 0;  // Protected by clog_mutex, so not atomic
 
     // A worker consumes and completes render_tile jobs until all are exhuasted
     auto worker = [&]() {
         while (true) {
-            std::size_t i = next_tile.fetch_add(1);
-            if (i >= tiles.size()) {
+            std::size_t my_tile_i = next_tile_i.fetch_add(1);
+            if (my_tile_i >= tiles.size()) {
                 break;
             }
 
-            render_tile(tiles[i], sampler, image_width, image_height, max_bounce_depth, t_range, frame_buffer);
+            render_tile(tiles[my_tile_i], sampler, image_width, image_height, max_bounce_depth, t_range, frame_buffer);
 
             std::lock_guard<std::mutex> lock {clog_mutex};
+            tiles_finished++;
             std::clog << std::format(
-                "Tile {} / {} finished.\n",
-                i + 1,
+                "{} / {} tiles finished.\n",
+                tiles_finished,
                 num_tiles
             );
         }

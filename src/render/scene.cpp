@@ -5,11 +5,15 @@
 
 Scene::Scene() : active_camera_index_{-1}, background_colour_{Colour::black}, tlas_{std::make_unique<TLAS>()} {}
 
-bool Scene::hit(const Ray& ray, HitRecord& hit_record, double t_min) const {
+void Scene::ensure_tlas_built() const {
     if (!tlas_is_valid_) {
         tlas_->build_bvh(instances_);
         tlas_is_valid_ = true;
     }
+}
+
+bool Scene::hit(const Ray& ray, HitRecord& hit_record, double t_min) const {
+    ensure_tlas_built();
     return tlas_->hit(ray, hit_record, t_min);
 }
 

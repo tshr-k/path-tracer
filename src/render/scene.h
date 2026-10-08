@@ -38,6 +38,11 @@ private:
 public:
     Scene();
 
+    // Must be called before scene_.hit() can safely be called from multiple threads:
+    // it performs the lazy TLAS build (and the Instance/Transform caches it triggers)
+    // single-threaded, so later calls just read an already-valid flag.
+    void ensure_tlas_built() const;
+
     bool hit(const Ray& ray, HitRecord& hit_record, double t_min) const;
 
     // Pass by value + move semantics is the idiomatic way to transfer ownership
