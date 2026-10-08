@@ -2,7 +2,7 @@
 
 ![Render](hero.png)
 
-A CPU path tracer written from scratch in C++20, built as a learning project to explore rendering, data structures, and multithreaded programming.
+A CPU path tracer I wrote from scratch in modern C++ to explore computer graphics, data structures, and multithreaded programming.
 
 ## Features
 
