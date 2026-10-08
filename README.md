@@ -1,6 +1,8 @@
 # PathTracer
 
-![Render](hero.png)
+<p align="center">
+    <img src="hero.png" alt="A sample render" width="300">
+</p>
 
 A CPU path tracer I wrote from scratch in modern C++ to explore computer graphics, data structures, and multithreaded programming.
 
@@ -11,8 +13,7 @@ A CPU path tracer I wrote from scratch in modern C++ to explore computer graphic
 - BVH-based BLAS/TLAS acceleration structures for fast ray-scene intersection
 - Instancing, so a single mesh can be reused with different transforms/materials
 - Diffuse, metal, dielectric, plastic, emissive, and "uber" materials via BSDFs
-- OBJ mesh loading
-- PPM image output
+- OBJ mesh loading and PPM image output
 
 ## Building
 
