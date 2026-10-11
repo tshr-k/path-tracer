@@ -17,36 +17,40 @@ bool Scene::hit(const Ray& ray, HitRecord& hit_record, double t_min) const {
     return tlas_->hit(ray, hit_record, t_min);
 }
 
-void Scene::add_material(MaterialVariant material) {
+int Scene::add_material(MaterialVariant material) {
     materials_.push_back(std::move(material));
+    return materials_.size() - 1;
 }
 
-void Scene::add_geometry(std::unique_ptr<Hittable> geometry) {
+int Scene::add_geometry(std::unique_ptr<Hittable> geometry) {
     geometries_.push_back(std::move(geometry));
+    return geometries_.size() - 1;
 }
 
-void Scene::add_mesh(const Mesh& mesh) {
+int Scene::add_mesh(const Mesh& mesh) {
     meshes_.push_back(std::make_shared<Mesh>(mesh));
-    add_geometry(std::make_unique<BLAS>(meshes_.back()));
+    return add_geometry(std::make_unique<BLAS>(meshes_.back()));;
 }
 
-void Scene::add_instance(std::size_t geometry_index, std::size_t material_index, const Transform& T) {
+int Scene::add_instance(std::size_t geometry_index, std::size_t material_index, const Transform& T) {
     // Geometry and material must already be in the scene
     auto instance = Instance{geometries_[geometry_index].get(), material_index};
     instance.set_transform(T);
     instances_.push_back(std::move(instance));
     tlas_is_valid_ = false;
+    return instances_.size() - 1;
 }
 
 void Scene::set_background_colour(const Colour& c) {
     background_colour_ = c;
 }
 
-void Scene::add_camera(Camera camera, bool set_active) {
+int Scene::add_camera(Camera camera, bool set_active) {
     cameras_.push_back(std::move(camera));
     if (set_active || active_camera_index_ == -1) {
         active_camera_index_ = cameras_.size() - 1;
     }
+    return cameras_.size() - 1;
 }
 
 const std::vector<Instance>& Scene::instances() const { return instances_; }

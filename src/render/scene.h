@@ -46,17 +46,17 @@ public:
     bool hit(const Ray& ray, HitRecord& hit_record, double t_min) const;
 
     // Pass by value + move semantics is the idiomatic way to transfer ownership
-    void add_material(MaterialVariant material);
+    int add_material(MaterialVariant material);
 
-    void add_geometry(std::unique_ptr<Hittable> geometry);
+    int add_geometry(std::unique_ptr<Hittable> geometry);
 
-    void add_mesh(const Mesh& mesh);
+    int add_mesh(const Mesh& mesh);
 
-    void add_instance(std::size_t geometry_index, std::size_t material_index, const Transform& T);
+    int add_instance(std::size_t geometry_index, std::size_t material_index, const Transform& T);
 
     void set_background_colour(const Colour& c);
 
-    void add_camera(Camera camera, bool set_active = false);
+    int add_camera(Camera camera, bool set_active = false);
 
     const std::vector<Instance>& instances() const;
     const std::vector<MaterialVariant>& materials() const;
