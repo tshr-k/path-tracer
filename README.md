@@ -21,7 +21,7 @@ Requires CMake 3.15+ and a C++20 compiler. Catch2 is fetched automatically for t
 
 ```sh
 cmake -B build
-cmake --build build --config Release
+cmake --build build
 ```
 
 ## Running
