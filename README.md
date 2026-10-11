@@ -1,4 +1,4 @@
-# PathTracer
+# Path Tracer
 
 <p align="center">
     <img src="hero.png" alt="A sample render" width="300">
