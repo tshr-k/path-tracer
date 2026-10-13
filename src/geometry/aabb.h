@@ -12,7 +12,12 @@ class Ray;
 
 class AABB {
 private:
-    std::array<math::Interval, 3> intervals_;
+    // Axis bounds are stored in separate min/max arrays, padded to 4 lanes so each loads straight into one
+    // __m256d in hit(). The padding lane is (-inf, +inf), which doesn't constrain the slab test
+    std::array<double, 4> min_;
+    std::array<double, 4> max_;
+
+    void set_axes(math::Interval x, math::Interval y, math::Interval z);
 
 public:
     AABB();

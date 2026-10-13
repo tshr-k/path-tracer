@@ -12,10 +12,16 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
-# Splitting the codebase into .h/.cpp pairs means the small, hot math types (Vector, Point,
-# Matrix, Colour, Ray, ONB, ...) are no longer inlined across translation units by default.
-# IPO/LTO restores that cross-TU inlining at link time for Release builds, so incremental
-# Debug builds stay fast while Release keeps the original header-only performance.
+# Target AVX2 + FMA for the actual path tracing code (Catch2 was configured above, so it is unaffected).
+if(MSVC)
+  add_compile_options(/arch:AVX2)
+else()
+  add_compile_options(-mavx2 -mfma)
+  if(MINGW)  # Workaround for stack misalignment bug in MinGW-w64
+    add_compile_options(-Wa,-muse-unaligned-vector-move)
+  endif()
+endif()
+
 include(CheckIPOSupported)
 check_ipo_supported(RESULT ipo_supported OUTPUT ipo_error)
 
